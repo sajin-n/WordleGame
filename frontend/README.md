@@ -43,4 +43,4 @@ To run this project locally, follow these steps:
 
 
 ## Deployed link  
-  https://wordle-game-i775k8ey0-sajins-projects-65f61f86.vercel.app/
+  https://wordle-game-ejx4gfhqc-sajins-projects-65f61f86.vercel.app/
