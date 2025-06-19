@@ -24,8 +24,8 @@ const allowedWords = [
   "EASTS", "EIGHT", "ELECT", "ELITE", "EMPTY", "ENDOW", "ENJOY", "ENTER", "ENTRY", "ENVOY",
   "EQUAL", "ERROR", "ESSAY", "EVENT", "EVERY", "EXACT", "EXCEL", "EXIST", "EXPEL", "FAIRY",
   "FAITH", "FALSE", "FANCI", "FANCY", "FARCE", "FARMER", "FATAL", "FAULT", "FAVOR", "FEAST",
-  "FLING", "FEWER", "FIBER", "FIELD", "FIFTY", "FIGHT", "FILET", "FINAL", "FIRST", "FISKY",
-  "FIXED", "FLAME", "FLASH", "FLEET", "FLESH", "FLING", "FLOOD", "FLOOR", "FLOUR", "FLUID",
+  "FEELING", "FEWER", "FIBER", "FIELD", "FIFTY", "FIGHT", "FILET", "FINAL", "FIRST", "FISKY",
+  "FIXED", "FLAME", "FLASH", "FLEET", "Flesh", "FLING", "FLOOD", "FLOOR", "FLOUR", "FLUID",
   "FLUSH", "FOCAL", "FOCUS", "FORGE", "FORTH", "FORTY", "FORUM", "FOUND", "FRAME", "FRANK",
   "FRESH", "FRONT", "FROTH", "FUNKY", "FUNNY", "GAILY", "GAINX", "GAMMA", "GAMES", "GANGL",
   "GHOST", "GIANT", "GIVEN", "GLADE", "GLASS", "GLEAM", "GLOOM", "GLORY", "GLOVE", "GODLY",
@@ -142,7 +142,7 @@ const solutionWords = [
   "STREW", "STRIP", "SUGAR", "SULKY", "SWELL", "SWIFT", "SWING", "SWIRL", "TABLE", "TAKEN",
   "TAPER", "TAUNT", "THANK", "THEFT", "THORN", "THREE", "THUMB", "TIGHT", "TIMER", "TIPSY",
   "TODAY", "TONIC", "TOPIC", "TORSO", "TOTAL", "TOUCH", "TOUGH", "TOWEL", "TRACE", "TRACK",
-  "TRADE", "TRAIL", "TRAIT", "TRANS", "TRASH", "TREAT", "TREND", "TRIAD", "TRIBE", "TRICK", "TRITE",
+  "TRADE", "TRAIL", "TRAIN", "TRASH", "TREAT", "TREND", "TRIAD", "TRIBE", "TRICK", "TRITE",
   "TRUNK", "TRUST", "TRUTH", "TULIP", "TUMMY", "TUNIC", "TWINE", "TWIRL", "ULCER", "ULTRA",
   "UMBRA", "UNIFY", "UNION", "UNZIP", "UPPER", "URBAN", "USHER", "VALID", "VALUE", "VAPOR",
   "VAULT", "VENUE", "VERGE", "VERSE", "VIEWS", "VILLA", "VINES", "VITAL", "VIVID", "VOICE",
@@ -230,13 +230,13 @@ const Keyboard = ({ onKeyPress, guessedLettersStatus }) => {
   const keyboardLayout = [
     ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
     ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
-    ['ENTER', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', '⬅️']
+    ['ENTER', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', '⬅️'] // Changed 'BACKSPACE' to '⬅️'
   ];
 
   const getButtonClass = (key) => {
     const status = guessedLettersStatus[key];
     let buttonClass = 'key-button';
-    if (key === 'ENTER' || key === 'BACKSPACE') {
+    if (key === 'ENTER' || key === '⬅️') { // Also use '⬅️' here for styling
       buttonClass += ' key-wide';
     }
 
@@ -258,7 +258,7 @@ const Keyboard = ({ onKeyPress, guessedLettersStatus }) => {
               onClick={() => onKeyPress(key)}
               className={getButtonClass(key)}
             >
-              {key === 'BACKSPACE' ? (
+              {key === '⬅️' ? ( // Changed 'BACKSPACE' to '⬅️' to render the icon
                 <svg xmlns="http://www.w3.org/2000/svg" className="backspace-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 19l-7-7 7-7m5 14l7-7-7-7" />
                 </svg>
@@ -284,16 +284,21 @@ const Message = ({ message }) => {
 };
 
 // Modal component for game over messages
-const Modal = ({ show, title, message, onPlayAgain }) => {
+const Modal = ({ show, title, message, onPlayAgain, win }) => { // Added 'win' prop
   if (!show) return null;
+  
+  const modalContentClass = `modal-content ${win ? 'win' : ''}`; // Conditionally add 'win' class
+  const playAgainButtonClass = `modal-play-again-btn`; // Class applied directly for styling
+  // Note: the `win` class on modal-content already handles button styling due to CSS cascade.
+
   return (
     <div className="modal-overlay">
-      <div className="modal-content">
+      <div className={modalContentClass}>
         <h2 className="modal-title">{title}</h2>
         <p className="modal-message">{message}</p>
         <button
           onClick={onPlayAgain}
-          className="modal-play-again-btn"
+          className={playAgainButtonClass}
         >
           Play Again
         </button>
@@ -438,7 +443,8 @@ export default function App() {
   const handleKeyPress = useCallback((key) => {
     if (gameOver) return;
 
-    if (key === 'BACKSPACE') {
+    // Check for both 'BACKSPACE' (physical key) and '⬅️' (on-screen button)
+    if (key === 'BACKSPACE' || key === '⬅️') {
       setCurrentGuess((prev) => prev.slice(0, -1));
     } else if (key === 'ENTER') {
       if (currentGuess.length !== 5) {
@@ -471,6 +477,7 @@ export default function App() {
   useEffect(() => {
     const handleKeyDown = (event) => {
       // Only accept alphanumeric keys, Backspace, and Enter
+      // The physical 'Backspace' key event.key is 'Backspace'
       if ((event.key.length === 1 && event.key.match(/[a-zA-Z]/)) || event.key === 'Backspace' || event.key === 'Enter') {
         handleKeyPress(event.key.toUpperCase());
       }
@@ -503,6 +510,7 @@ export default function App() {
           title={win ? 'Congratulations!' : 'Game Over!'}
           message={win ? `You guessed the word in ${guesses.length} tries!` : `The word was "${wordToGuess}".`}
           onPlayAgain={initializeGame}
+          win={win} // Pass the 'win' state to the Modal component
         />
       </div>
 
