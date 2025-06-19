@@ -1,0 +1,721 @@
+/* Import Google Fonts - Inter for clean typography */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap'); /* Added 900 for even stronger headings */
+
+:root {
+  --glass-primary: rgba(255, 255, 255, 0.1);
+  --glass-secondary: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.2);
+  --glass-hover: rgba(255, 255, 255, 0.15);
+  --text-primary: rgba(255, 255, 255, 0.9);
+  --text-secondary: rgba(255, 255, 255, 0.7);
+  --text-muted: rgba(255, 255, 255, 0.5);
+  --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.12);
+  --shadow-medium: 0 12px 40px rgba(0, 0, 0, 0.15);
+  --backdrop-blur: blur(20px);
+  --backdrop-blur-strong: blur(40px);
+  
+  /* Solid colors for tiles and keyboard */
+  --tile-empty: #2a2a2a;
+  --tile-typed: #3a3a3a;
+  --tile-absent: #4a4a4a;
+  --tile-present: #d97706;
+  --tile-correct: #16a34a;
+  --key-default: #333333;
+  --key-hover: #404040;
+  --key-active: #2a2a2a;
+
+  /* Modal Specific Colors */
+  --modal-red-bg: rgba(139, 0, 0, 0.25);
+  --modal-red-border: rgba(255, 100, 100, 0.4);
+  --modal-red-button: #dc2626;
+  --modal-red-button-hover: #b91c1c;
+  --modal-red-button-shadow: rgba(220, 38, 38, 0.4);
+  --modal-red-button-border: rgba(255, 150, 150, 0.6);
+
+  --modal-green-bg: rgba(22, 163, 74, 0.25); /* Greenish tint */
+  --modal-green-border: rgba(100, 255, 100, 0.4); /* Slightly greenish border */
+  --modal-green-button: #16a34a; /* More green than the modal content */
+  --modal-green-button-hover: #15803d; /* Darker green on hover */
+  --modal-green-button-shadow: rgba(22, 163, 74, 0.4); /* Greenish shadow */
+  --modal-green-button-border: rgba(150, 255, 150, 0.6); /* Even greener border */
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: linear-gradient(135deg, #643131 0%, #002c1d 25%, #270038 50%, #481f00 75%, #000000 100%);
+  background-size: 400% 400%;
+  animation: gradientFlow 20s ease-in-out infinite;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+  position: relative;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: 
+    radial-gradient(circle at 25% 25%, rgba(99, 102, 241, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, rgba(236, 72, 153, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes gradientFlow {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+#root {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+}
+
+/* New wrapper for game and rules side-by-side */
+.game-wrapper {
+  display: flex;
+  flex-direction: column; /* Default to column on small screens */
+  align-items: center;
+  gap: 20px; /* Space between game and rules */
+  width: 100%;
+  max-width: 1000px; /* Max width for the entire game + rules section */
+}
+
+@media (min-width: 768px) { /* Adjust to row layout on larger screens */
+  .game-wrapper {
+    flex-direction: row;
+    align-items: flex-start; /* Align items to the top when in a row */
+    justify-content: center;
+  }
+}
+
+.game-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 30px;
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  background: var(--glass-primary);
+  backdrop-filter: var(--backdrop-blur);
+  border-radius: 24px;
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-medium);
+}
+
+.game-title {
+  font-size: 2.5rem; /* Made slightly bigger */
+  font-weight: 800; /* Bolder font weight */
+  color: var(--text-primary);
+  margin-bottom: 2rem; /* Decreased margin-bottom */
+  letter-spacing: 0.15em; /* Increased letter spacing */
+  text-align: center;
+  position: relative;
+  text-shadow: 0px 4px 8px rgba(0, 0, 0, 0.4); /* Added text shadow, changed opacity to a valid value */
+}
+
+/* Board Styling - Glass Container */
+.board-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 24px;
+  border-radius: 16px;
+  background: var(--glass-secondary);
+  backdrop-filter: var(--backdrop-blur);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-soft);
+}
+
+.board-row {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+/* Cell Styling - Solid, Minimal Design */
+.cell {
+  width: 52px;
+  height: 52px;
+  border: 2px solid transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  text-transform: uppercase;
+  color: #ffffff;
+  position: relative;
+  overflow: hidden;
+}
+
+.cell::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.5s ease;
+  z-index: 1;
+}
+
+.cell.empty {
+  background: var(--tile-empty);
+  border-color: #404040;
+  color: #888888;
+}
+
+.cell.empty:hover::before {
+  left: 100%;
+}
+
+.cell.typed {
+  background: var(--tile-typed);
+  border-color: #555555;
+  color: #ffffff;
+  transform: scale(1.05) rotateZ(1deg);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.cell.typed::before {
+  left: 100%;
+}
+
+.cell.absent {
+  background: var(--tile-absent);
+  border-color: var(--tile-absent);
+  color: #ffffff;
+  transform: scale(1.02);
+  animation: flipIn 0.6s ease-in-out;
+}
+
+.cell.present {
+  background: var(--tile-present);
+  border-color: var(--tile-present);
+  color: #ffffff;
+  transform: scale(1.05);
+  animation: flipIn 0.6s ease-in-out, pulseGlow 2s infinite;
+  box-shadow: 0 0 15px rgba(217, 119, 6, 0.4);
+}
+
+.cell.correct {
+  background: var(--tile-correct);
+  border-color: var(--tile-correct);
+  color: #ffffff;
+  transform: scale(1.05);
+  animation: flipIn 0.6s ease-in-out, successBounce 0.8s ease-out 0.6s;
+  box-shadow: 0 0 20px rgba(22, 163, 74, 0.5);
+}
+
+@keyframes flipIn {
+  0% {
+    transform: scale(1) rotateY(0deg);
+  }
+  50% {
+    transform: scale(1.1) rotateY(90deg);
+  }
+  100% {
+    transform: scale(1.05) rotateY(0deg);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(217, 119, 6, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(217, 119, 6, 0.6);
+  }
+}
+
+@keyframes successBounce {
+  0%, 20%, 40%, 60%, 80%, 100% {
+    transform: scale(1.05);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    transform: scale(1.15);
+  }
+}
+
+/* Keyboard Styling - Glass Container */
+.keyboard-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 32px;
+  padding: 20px;
+  border-radius: 16px;
+  background: var(--glass-secondary);
+  backdrop-filter: var(--backdrop-blur);
+  border: 1px solid var(--glass-border);
+  width: 100%;
+  max-width: 480px;
+  box-shadow: var(--shadow-soft);
+}
+
+.keyboard-row {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 6px;
+  justify-content: center;
+  width: 100%;
+}
+
+/* Key Styling - Solid, Minimal Design */
+.key-button {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 6px;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  cursor: pointer;
+  user-select: none;
+  border: none;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  min-height: 44px;
+  position: relative;
+  overflow: hidden;
+}
+
+.key-button::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.3s ease, height 0.3s ease;
+}
+
+.key-button:active::after {
+  width: 100px;
+  height: 100px;
+}
+
+.key-wide {
+  flex-grow: 1.8;
+  font-size: 0.8rem;
+  min-width: 64px;
+}
+
+.key-default {
+  background: var(--key-default);
+  color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.key-default:hover {
+  background: var(--key-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.key-default:active {
+  transform: translateY(0);
+  background: var(--key-active);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.key-correct {
+  background: var(--tile-correct);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(22, 163, 74, 0.3);
+  animation: keySuccess 0.4s ease-out;
+}
+
+.key-correct:hover {
+  background: #15803d;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(22, 163, 74, 0.4);
+}
+
+.key-present {
+  background: var(--tile-present);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(217, 119, 6, 0.3);
+  animation: keyWarning 0.4s ease-out;
+}
+
+.key-present:hover {
+  background: #c2410c;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(217, 119, 6, 0.4);
+}
+
+.key-absent {
+  background: var(--tile-absent);
+  color: #888888;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  opacity: 0.7;
+  animation: keyDisable 0.4s ease-out;
+}
+
+.key-absent:hover {
+  background: #525252;
+}
+
+@keyframes keySuccess {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+    box-shadow: 0 4px 16px rgba(22, 163, 74, 0.5);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes keyWarning {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+    box-shadow: 0 4px 16px rgba(217, 119, 6, 0.5);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes keyDisable {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 0.7;
+  }
+}
+
+.backspace-icon {
+  height: 18px;
+  width: 18px;
+  stroke: currentColor;
+  stroke-width: 2;
+}
+
+/* Message Box Styling - Glass */
+.message-box {
+  position: absolute;
+  top: 30px; /* Adjusted to be inside the container, matching padding */
+  right: 30px; /* Positioned to the right */
+  left: auto; /* Remove centering transform, allowing 'right' to take effect */
+  transform: none; /* Reset transform to only manage vertical movement in animation */
+  background: var(--key-active);
+  backdrop-filter: var(--backdrop-blur-strong);
+  color: var(--text-primary);
+  padding: 12px 20px;
+  border-radius: 12px;
+  box-shadow: var(--shadow-medium);
+  text-align: center;
+  animation: messageAppear 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  z-index: 10;
+  white-space: nowrap;
+  border: 1px solid var(--glass-border);
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+@keyframes messageAppear {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px); /* Only vertical movement */
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Modal Styling - Glass */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  animation: overlayFadeIn 0.3s ease-out;
+}
+
+@keyframes overlayFadeIn {
+  from { 
+    opacity: 0;
+    backdrop-filter: blur(0px);
+  }
+  to { 
+    opacity: 1;
+    backdrop-filter: blur(8px);
+  }
+}
+
+.modal-content {
+  background: var(--modal-red-bg); /* Default to reddish tint for Game Over */
+  backdrop-filter: var(--backdrop-blur-strong);
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: var(--shadow-medium);
+  text-align: center;
+  max-width: 320px;
+  width: 100%;
+  border: 1px solid var(--modal-red-border); /* Default to reddish border */
+  animation: modalSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Green styling for the win modal */
+.modal-content.win {
+  background: var(--modal-green-bg);
+  border: 1px solid var(--modal-green-border);
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modal-title {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+  letter-spacing: -0.01em;
+}
+
+.modal-message {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin-bottom: 32px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.modal-play-again-btn {
+  background: var(--modal-red-button); /* Default to red for Game Over */
+  color: var(--text-primary);
+  font-weight: 500;
+  padding: 14px 28px;
+  border-radius: 12px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px var(--modal-red-button-shadow); /* Reddish shadow */
+  border: 1px solid var(--modal-red-button-border); /* Even redder border */
+  cursor: pointer;
+  font-size: 0.95rem;
+  backdrop-filter: var(--backdrop-blur);
+}
+
+.modal-play-again-btn:hover {
+  background: var(--modal-red-button-hover); /* Darker red on hover */
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px var(--modal-red-button-shadow); /* Stronger reddish shadow on hover */
+}
+
+.modal-play-again-btn:active {
+  transform: translateY(0);
+}
+
+/* Green styling for the win modal's button */
+.modal-content.win .modal-play-again-btn {
+  background: var(--modal-green-button);
+  box-shadow: 0 4px 12px var(--modal-green-button-shadow);
+  border: 1px solid var(--modal-green-button-border);
+}
+
+.modal-content.win .modal-play-again-btn:hover {
+  background: var(--modal-green-button-hover);
+  box-shadow: 0 6px 16px var(--modal-green-button-shadow);
+}
+
+
+/* Rules Box Styling - Glass */
+.rules-box {
+  background: var(--glass-primary);
+  backdrop-filter: var(--backdrop-blur);
+  padding: 30px; /* Increased padding */
+  border-radius: 20px;
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-medium); /* Slightly stronger shadow */
+  width: 100%;
+  max-width: 380px; /* Slightly wider */
+  box-sizing: border-box;
+  text-align: left;
+  margin-top: 20px; /* Spacing for mobile */
+  display: flex; /* Use flex for internal layout */
+  flex-direction: column;
+}
+
+@media (min-width: 768px) {
+  .rules-box {
+    margin-top: 0; /* No top margin when side-by-side */
+    position: sticky; /* Keeps it in view as you scroll if page content expands */
+    top: 20px; /* Distance from top */
+  }
+}
+
+.rules-box h3 {
+  font-size: 1.8rem; /* Larger font size */
+  font-weight: 800; /* Heavier font weight */
+  color: var(--text-primary);
+  margin-bottom: 25px; /* Increased margin */
+  text-align: center;
+  letter-spacing: 0.08em; /* More prominent letter spacing */
+  text-transform: uppercase; /* Uppercase for heading */
+  padding-bottom: 15px; /* Padding below heading */
+  border-bottom: 1px solid var(--glass-border); /* Subtle separator */
+  text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2); /* Added subtle shadow to heading */
+}
+
+.rules-box p {
+  font-size: 1rem; /* Slightly larger font size */
+  line-height: 1.6; /* Improved line height for readability */
+  color: var(--text-secondary);
+  margin-bottom: 15px; /* Consistent spacing */
+}
+
+.rules-box ul {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0 0 0; /* Increased margin for the list */
+}
+
+.rules-box li {
+  display: flex;
+  align-items: center;
+  padding: 10px 0; /* Add padding to list items for more space */
+  margin-bottom: 5px; /* Reduced margin to use padding for spacing instead */
+  font-size: 0.95rem; /* Slightly larger list item font */
+  color: var(--text-secondary);
+  font-weight: 400;
+  line-height: 1.4;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.1); /* Subtle dashed border for separation */
+}
+
+.rules-box li:last-child {
+  border-bottom: none; /* No border for the last item */
+}
+
+.rules-box .color-example {
+  width: 32px; /* Larger example boxes */
+  height: 32px; /* Larger example boxes */
+  border-radius: 8px; /* More rounded corners */
+  display: flex; /* Use flex to center letter inside */
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: #fff;
+  margin-right: 15px; /* Increased margin */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25); /* Stronger shadow for examples */
+  flex-shrink: 0; /* Prevent shrinking on small screens */
+}
+
+.rules-box .color-example.correct-example {
+  background-color: var(--tile-correct);
+}
+
+.rules-box .color-example.present-example {
+  background-color: var(--tile-present);
+}
+
+.rules-box .color-example.absent-example {
+  background-color: var(--tile-absent);
+  color: var(--text-muted); /* Make absent text slightly muted */
+}
+
+/* Responsive Design for both game and rules */
+@media (max-width: 767px) {
+  .game-container {
+    padding: 30px 20px;
+    margin: 0; /* Remove side margins on smaller screens */
+  }
+  
+  .game-title {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+  }
+  
+  .cell {
+    width: 48px;
+    height: 48px;
+    font-size: 1.4rem;
+  }
+  
+  .board-container {
+    padding: 20px;
+  }
+  
+  .keyboard-container {
+    padding: 16px;
+  }
+  
+  .key-button {
+    padding: 10px 4px;
+    font-size: 0.85rem;
+    min-height: 40px;
+  }
+  
+  .key-wide {
+    min-width: 56px;
+  }
+
+  .rules-box {
+    margin-top: 20px; /* Ensure space below game container */
+    padding: 20px; /* Slightly reduced padding for mobile */
+  }
+  .rules-box h3 {
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+  }
+  .rules-box p, .rules-box li {
+    font-size: 0.9rem;
+  }
+  .rules-box .color-example {
+    width: 25px;
+    height: 25px;
+    margin-right: 10px;
+  }
+
+  /* Adjust message box for smaller screens */
+  .message-box {
+    top: 20px; /* Adjusted for smaller padding on mobile */
+    right: 20px; /* Adjusted for smaller padding on mobile */
+  }
+}
