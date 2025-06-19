@@ -1,12 +1,46 @@
-# React + Vite
+# Wordle Game
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A fun and interactive Wordle clone built with React, featuring a sleek glassmorphism-inspired UI and responsive design.
 
-Currently, two official plugins are available:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
 
-## Expanding the ESLint configuration
+* **Interactive Gameplay:** Classic Wordle mechanics with tile animations and keyboard feedback.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+* **Responsive Design:** Optimized for play on both desktop and mobile devices.
+
+* **Stylish UI:** Modern glassmorphism design with dynamic gradient background.
+
+* **Clear Messaging:** Provides feedback for invalid words, not enough letters, and game outcomes.
+
+* **Customizable:** Easy to modify word lists and styling.
+
+## How to Play
+
+1. **Guess the WORDLE in 6 tries.**
+
+2. Each guess must be a valid 5-letter word. Hit the "ENTER" button (or your keyboard's Enter key) to submit.
+
+3. After each guess, the color of the tiles will change to show how close your guess was to the word:
+
+   * **Green (e.g., W):** The letter is in the word and in the correct spot.
+
+   * **Orange (e.g., I):** The letter is in the word but in the wrong spot.
+
+   * **Gray (e.g., X):** The letter is not in the word in any spot.
+
+4. If you guess the word correctly, a green "Congratulations!" message will appear.
+
+5. If you run out of guesses, a red "Game Over!" message will appear, revealing the word.
+
+6. Click "Play Again" to start a new round!
+
+## Installation
+
+To run this project locally, follow these steps:
+
+1. **Clone the repository (or download the code):**
+
+
+## Deployed link  
+  https://wordle-game-dusky.vercel.app/
