@@ -28,7 +28,7 @@ A fun and interactive Wordle clone built with React, featuring a sleek glassmorp
    * **Orange (e.g., I):** The letter is in the word but in the wrong spot.
 
    * **Gray (e.g., X):** The letter is not in the word in any spot.
-
+     
 4. If you guess the word correctly, a green "Congratulations!" message will appear.
 
 5. If you run out of guesses, a red "Game Over!" message will appear, revealing the word.
@@ -43,4 +43,4 @@ To run this project locally, follow these steps:
 
 
 ## Deployed link  
-  https://wordle-game-dusky.vercel.app/
+  [https://wordle-game-dusky.vercel.app/](https://wordle-game-sajins-projects-65f61f86.vercel.app/)
